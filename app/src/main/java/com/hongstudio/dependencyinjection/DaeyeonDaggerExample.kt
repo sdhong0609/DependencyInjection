@@ -1,14 +1,18 @@
 package com.hongstudio.dependencyinjection
 
+import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import javax.inject.Inject
 import javax.inject.Singleton
 
-data class Car(
+interface Car
+
+data class SamsungCar @Inject constructor(
     val engine: Engine,
     val tire: Tire
-)
+): Car
 
 interface Engine {
     fun print()
@@ -33,7 +37,7 @@ class ElectricEngine : Engine {
     CarModule::class
 ])
 interface CarComponent {
-    fun getCar(): Car
+    fun getCar(): SamsungCar
 }
 
 interface Tire
@@ -61,12 +65,9 @@ class TireModule {
 }
 
 @Module
-class CarModule {
-    @Singleton
-    @Provides
-    fun provideCar(engine: Engine, tire: Tire): Car {
-        return Car(engine, tire)
-    }
+abstract class CarModule {
+    @Binds
+    abstract fun bindsCar(car: SamsungCar): Car
 }
 
 fun main() {
